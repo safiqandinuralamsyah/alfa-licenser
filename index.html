@@ -484,6 +484,28 @@
                 font-size: 22px;
             }
         }
+
+        @keyframes pulseGlow {
+            0%, 100% {
+                transform: scale(1);
+                filter: drop-shadow(0 0 6px rgba(59, 130, 246, 0.4));
+            }
+            50% {
+                transform: scale(1.05);
+                filter: drop-shadow(0 0 14px rgba(16, 185, 129, 0.7));
+            }
+        }
+
+        #history-list::-webkit-scrollbar {
+            width: 4px;
+        }
+        #history-list::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.1);
+        }
+        #history-list::-webkit-scrollbar-thumb {
+            background: var(--border-glass);
+            border-radius: 2px;
+        }
     </style>
 </head>
 <body>
@@ -505,9 +527,12 @@
         <div class="card">
             <div class="header">
                 <div class="logo-area">
-                    <!-- Inline SVG Shield Icon -->
-                    <svg viewBox="0 0 24 24">
-                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                    <!-- Premium Animated Tech Shield & Key Logo -->
+                    <svg viewBox="0 0 24 24" style="width: 42px; height: 42px; filter: drop-shadow(0 0 10px rgba(59, 130, 246, 0.6)); animation: pulseGlow 2.5s infinite ease-in-out;">
+                        <!-- Shield path -->
+                        <path d="M12 1L3 5v6c0 5.5 3.8 10.7 9 12 5.2-1.3 9-6.5 9-12V5l-9-4z" fill="none" stroke="url(#logo-grad)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+                        <!-- Inner key icon -->
+                        <path d="M12 6a3 3 0 0 0-3 3c0 1.3.8 2.4 2 2.8V15h-2v2h2v2h2v-6.2c1.2-.4 2-1.5 2-2.8a3 3 0 0 0-3-3zm0 4a1 1 0 1 1 0-2 1 1 0 0 1 0 2z" fill="url(#logo-grad)"/>
                     </svg>
                     ALFA LICENSER
                 </div>
@@ -525,7 +550,7 @@
                     <svg class="input-icon" viewBox="0 0 24 24">
                         <path d="M12.65 10C11.83 7.67 9.61 6 7 6c-3.31 0-6 2.69-6 6s2.69 6 6 6c2.61 0 4.83-1.67 5.65-4H17v4h4v-4h2v-4H12.65zM7 14c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"/>
                     </svg>
-                    <input type="password" id="secret-key" class="form-control" value="ALFA-SECURE-KEY-2026">
+                    <input type="password" id="secret-key" class="form-control" placeholder="Masukkan Secret Key dari Owner" value="">
                     <button class="eye-toggle-btn" id="eye-toggle" onclick="toggleSecretVisibility()" title="Lihat/Sembunyikan">
                         <!-- Inline SVG Eye Icon -->
                         <svg id="eye-icon" viewBox="0 0 24 24">
@@ -591,6 +616,9 @@
                     <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
                     Lisensi Berhasil Dibuat
                 </div>
+                <!-- Status Badge -->
+                <div id="status-badge" style="margin-bottom: 12px; font-size: 11px; padding: 6px 12px; border-radius: 20px; font-weight: 600; display: none;"></div>
+                
                 <div class="license-box" id="license-key-display">
                     --------
                 </div>
@@ -613,6 +641,16 @@
                         <li>Jalankan bot WhatsApp di terminal HP/Termux/PC Anda.</li>
                         <li>Tempelkan (*paste*) kode tersebut saat bot meminta kunci aktivasi lisensi.</li>
                     </ul>
+                </div>
+            </div>
+
+            <!-- Riwayat Lisensi Aktif (Browser Ini) -->
+            <div id="history-section" style="display:none; margin-top:20px; border-top:1px solid var(--border-glass); padding-top:15px;">
+                <div style="font-size: 13px; font-weight: 600; color: var(--text-muted); margin-bottom: 10px; text-align: left;">
+                    Riwayat Lisensi Aktif (Browser Ini)
+                </div>
+                <div id="history-list" style="display: flex; flex-direction: column; gap: 8px; max-height: 120px; overflow-y: auto; padding-right: 5px;">
+                    <!-- Items will be generated here dynamically -->
                 </div>
             </div>
         </div>
@@ -638,12 +676,16 @@
 
         // Load & Check Query Param & Stored Settings
         window.addEventListener('DOMContentLoaded', () => {
-            const storedKey = localStorage.getItem('alfa_secret_key');
-            if (storedKey) {
-                secretInput.value = storedKey;
-            }
             populateMonthDropdown();
             checkUrlQueryParams();
+            
+            const storedKey = localStorage.getItem('alfa_secret_key');
+            if (storedKey && !secretInput.value) {
+                secretInput.value = storedKey;
+            }
+            
+            secretInput.addEventListener('input', updateHistoryList);
+            updateHistoryList();
         });
 
         // Toggle Secret Key Input Visibility
@@ -687,6 +729,12 @@
         function checkUrlQueryParams() {
             const urlParams = new URLSearchParams(window.location.search);
             const queryPhone = urlParams.get('phone') || urlParams.get('num');
+            const queryKey = urlParams.get('key') || urlParams.get('secret');
+            
+            if (queryKey) {
+                secretInput.value = queryKey;
+                localStorage.setItem('alfa_secret_key', queryKey);
+            }
             
             if (queryPhone) {
                 phoneInput.value = queryPhone;
@@ -918,16 +966,25 @@
 
         // Generate and verify key
         function generateLicenseKey() {
-            const secretKey = secretInput.value.trim() || "ALFA-SECURE-KEY-2026";
+            const secretKey = secretInput.value.trim();
             const rawPhone = phoneInput.value.trim();
             const targetMonth = document.getElementById('license-month').value;
             const resultBox = document.getElementById('result-box');
             const licenseDisplay = document.getElementById('license-key-display');
             const copyBtn = document.getElementById('copy-btn');
+            const statusBadge = document.getElementById('status-badge');
             
-            // Check validation
+            // Check secret key validation
+            if (!secretKey) {
+                alert('⚠️ Harap masukkan Secret License Key terlebih dahulu!');
+                secretInput.focus();
+                return;
+            }
+
+            // Check phone validation
             if (!rawPhone || rawPhone.length < 9) {
                 alert('⚠️ Harap masukkan nomor WhatsApp bot yang valid!');
+                phoneInput.focus();
                 return;
             }
 
@@ -937,15 +994,46 @@
             // Clean number
             const phoneNumber = rawPhone.replace(/[^0-9]/g, '');
 
-            // Random 4 digit Salt (1000 - 9999)
-            const salt = Math.floor(1000 + Math.random() * 9000);
+            // Check if already generated in browser history
+            let history = {};
+            try {
+                history = JSON.parse(localStorage.getItem('alfa_license_history') || '{}');
+            } catch(e) {}
 
-            // Compute MD5 signature
-            const inputString = secretKey + phoneNumber + salt + targetMonth;
-            const signature = calculateMd5(inputString).slice(0, 8).toUpperCase();
-            
-            // Combined format
-            const finalCode = `${salt}-${signature}`;
+            const keyIndex = `${secretKey}_${phoneNumber}_${targetMonth}`;
+            let finalCode = '';
+            let isAlreadyRegistered = false;
+
+            if (history[keyIndex]) {
+                finalCode = history[keyIndex];
+                isAlreadyRegistered = true;
+            } else {
+                // Random 4 digit Salt (1000 - 9999)
+                const salt = Math.floor(1000 + Math.random() * 9000);
+
+                // Compute MD5 signature
+                const inputString = secretKey + phoneNumber + salt + targetMonth;
+                const signature = calculateMd5(inputString).slice(0, 8).toUpperCase();
+                
+                // Combined format
+                finalCode = `${salt}-${signature}`;
+
+                // Save to history
+                history[keyIndex] = finalCode;
+                localStorage.setItem('alfa_license_history', JSON.stringify(history));
+            }
+
+            // Show status notification badge
+            statusBadge.style.display = 'inline-block';
+            if (isAlreadyRegistered) {
+                statusBadge.style.backgroundColor = 'rgba(245, 158, 11, 0.15)';
+                statusBadge.style.color = '#f59e0b';
+                statusBadge.innerText = '⚠️ Nomor ini sudah terdaftar! Memuat kode sebelumnya.';
+            } else {
+                statusBadge.style.backgroundColor = 'rgba(16, 185, 129, 0.15)';
+                statusBadge.style.color = 'var(--accent-success)';
+                statusBadge.innerText = '✨ Lisensi baru berhasil dibuat!';
+            }
 
             licenseDisplay.innerText = finalCode;
             resultBox.style.display = 'block';
@@ -953,6 +1041,9 @@
             // Reset copy button status
             copyBtn.className = 'btn-copy';
             copyBtn.innerHTML = `<svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg> Salin Kode`;
+
+            // Refresh history view
+            updateHistoryList();
         }
 
         // Copy generated license code to clipboard
@@ -967,6 +1058,91 @@
                 copyBtn.innerHTML = `<svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Berhasil Disalin`;
             }).catch(err => {
                 alert('Gagal menyalin kode secara otomatis. Silakan salin secara manual.');
+            });
+        }
+
+        // Render generated license history (Local to browser)
+        function updateHistoryList() {
+            const historySec = document.getElementById('history-section');
+            const historyList = document.getElementById('history-list');
+            
+            let history = {};
+            try {
+                history = JSON.parse(localStorage.getItem('alfa_license_history') || '{}');
+            } catch(e) {}
+            
+            const keys = Object.keys(history);
+            if (keys.length === 0) {
+                historySec.style.display = 'none';
+                return;
+            }
+            
+            const currentSecret = secretInput.value.trim();
+            if (!currentSecret) {
+                historySec.style.display = 'none';
+                return;
+            }
+            
+            // Only show history matching the current secret key
+            const filteredKeys = keys.filter(k => k.startsWith(currentSecret + '_'));
+            
+            if (filteredKeys.length === 0) {
+                historySec.style.display = 'none';
+                return;
+            }
+            
+            historySec.style.display = 'block';
+            historyList.innerHTML = '';
+            
+            // Show newest history on top
+            filteredKeys.reverse().forEach(key => {
+                const parts = key.split('_');
+                const phone = parts[1];
+                const monthStr = parts[2];
+                const codeVal = history[key];
+                
+                const monthParts = monthStr.split('-');
+                const year = monthParts[0];
+                const mNum = parseInt(monthParts[1]) - 1;
+                const monthNames = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agt", "Sep", "Okt", "Nov", "Des"];
+                const readableMonth = `${monthNames[mNum]} ${year}`;
+                
+                const item = document.createElement('div');
+                item.style.display = 'flex';
+                item.style.justifyContent = 'space-between';
+                item.style.alignItems = 'center';
+                item.style.padding = '8px 12px';
+                item.style.background = 'rgba(255, 255, 255, 0.02)';
+                item.style.border = '1px solid var(--border-glass)';
+                item.style.borderRadius = '8px';
+                item.style.fontSize = '12px';
+                
+                item.innerHTML = `
+                    <div style="text-align: left;">
+                        <span style="font-weight: 600; color: var(--text-main);">${phone}</span>
+                        <span style="color: var(--text-muted); font-size: 10px; margin-left: 5px;">(${readableMonth})</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <code style="font-family: monospace; font-weight: 700; color: var(--accent-success); letter-spacing: 0.5px;">${codeVal}</code>
+                        <button onclick="copySpecificCode('${codeVal}', this)" style="background: none; border: none; cursor: pointer; color: var(--text-muted); display: flex; align-items: center; padding: 2px;" title="Salin Kode">
+                            <svg viewBox="0 0 24 24" style="width: 14px; height: 14px; fill: currentColor;"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+                        </button>
+                    </div>
+                `;
+                historyList.appendChild(item);
+            });
+        }
+
+        // Copy item code from history list
+        function copySpecificCode(code, btn) {
+            navigator.clipboard.writeText(code).then(() => {
+                const origHtml = btn.innerHTML;
+                btn.innerHTML = `<svg viewBox="0 0 24 24" style="width: 14px; height: 14px; fill: var(--accent-success);"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>`;
+                setTimeout(() => {
+                    btn.innerHTML = origHtml;
+                }, 1500);
+            }).catch(err => {
+                alert('Gagal menyalin.');
             });
         }
     </script>
