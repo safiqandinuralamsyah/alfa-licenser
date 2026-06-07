@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alfa Bot - License Generator Panel</title>
+    
+    <!-- Google Fonts: Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Blueimp MD5 CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/blueimp-md5/2.19.0/js/md5.min.js"></script>
+
+    <style>
+        :root {
+            --bg-primary: #0a0f1d;
+            --bg-secondary: #131c31;
+            --accent-color: #3b82f6;
+            --accent-hover: #2563eb;
+            --accent-success: #10b981;
+            --accent-success-hover: #059669;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --border-glass: rgba(255, 255, 255, 0.08);
+            --bg-glass: rgba(19, 28, 49, 0.7);
+            --glow-color: rgba(59, 130, 246, 0.4);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Outfit', sans-serif;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Background Glow effects */
+        body::before {
+            content: '';
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, var(--glow-color) 0%, rgba(0,0,0,0) 70%);
+            top: -100px;
+            left: -100px;
+            z-index: -1;
+            filter: blur(50px);
+            opacity: 0.5;
+        }
+
+        body::after {
+            content: '';
+            position: absolute;
+            width: 450px;
+            height: 450px;
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.2) 0%, rgba(0,0,0,0) 70%);
+            bottom: -100px;
+            right: -100px;
+            z-index: -1;
+            filter: blur(50px);
+            opacity: 0.5;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 550px;
+            z-index: 10;
+        }
+
+        /* Glassmorphism Card */
+        .card {
+            background: var(--bg-glass);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border-glass);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-color), var(--accent-success));
+        }
+
+        /* Header Styles */
+        .header {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .logo-area {
+            font-size: 45px;
+            background: linear-gradient(135deg, #3b82f6, #10b981);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+            letter-spacing: -1px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .logo-area i {
+            background: linear-gradient(135deg, #3b82f6, #10b981);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 14px;
+            font-weight: 400;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        /* Input Form Styles */
+        .form-group {
+            margin-bottom: 24px;
+            position: relative;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-main);
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .form-label span {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-wrapper i {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 18px;
+        }
+
+        .form-control {
+            width: 100%;
+            background-color: rgba(10, 15, 29, 0.6);
+            border: 1.5px solid var(--border-glass);
+            border-radius: 14px;
+            padding: 16px 16px 16px 48px;
+            color: var(--text-main);
+            font-size: 16px;
+            font-weight: 500;
+            outline: none;
+        }
+
+        .form-control:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.25);
+            background-color: rgba(10, 15, 29, 0.9);
+        }
+
+        /* Toggle Secret Key Visibility */
+        .toggle-password {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: var(--text-muted);
+        }
+
+        .toggle-password:hover {
+            color: var(--text-main);
+        }
+
+        /* Month select design */
+        select.form-control {
+            appearance: none;
+            -webkit-appearance: none;
+            cursor: pointer;
+        }
+
+        .select-arrow {
+            position: absolute;
+            right: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            pointer-events: none;
+        }
+
+        /* Submit Button */
+        .btn-submit {
+            width: 100%;
+            background: linear-gradient(135deg, var(--accent-color), var(--accent-hover));
+            color: #ffffff;
+            border: none;
+            border-radius: 14px;
+            padding: 18px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
+            margin-top: 10px;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 25px rgba(59, 130, 246, 0.4);
+            filter: brightness(1.1);
+        }
+
+        .btn-submit:active {
+            transform: translateY(1px);
+        }
+
+        /* Result Area */
+        .result-container {
+            margin-top: 35px;
+            background: rgba(16, 185, 129, 0.06);
+            border: 1.5px dashed rgba(16, 185, 129, 0.3);
+            border-radius: 18px;
+            padding: 24px;
+            text-align: center;
+            display: none;
+            transform: scale(0.95);
+            opacity: 0;
+            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        @keyframes popIn {
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .result-title {
+            color: var(--accent-success);
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .license-box {
+            background-color: rgba(10, 15, 29, 0.8);
+            border: 1px solid var(--border-glass);
+            border-radius: 12px;
+            padding: 18px;
+            font-size: 32px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            color: #ffffff;
+            margin-bottom: 16px;
+            position: relative;
+            font-family: monospace;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-copy {
+            background: rgba(255, 255, 255, 0.06);
+            color: var(--text-main);
+            border: 1px solid var(--border-glass);
+            border-radius: 10px;
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-copy:hover {
+            background-color: var(--accent-success);
+            border-color: var(--accent-success);
+            color: #ffffff;
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-copy.copied {
+            background-color: var(--accent-success);
+            border-color: var(--accent-success);
+            color: #ffffff;
+        }
+
+        /* Footer info */
+        .app-footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 12px;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        .app-footer a {
+            color: var(--accent-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .app-footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive Settings */
+        @media (max-width: 480px) {
+            .card {
+                padding: 24px;
+                border-radius: 20px;
+            }
+
+            .logo-area {
+                font-size: 35px;
+            }
+
+            .license-box {
+                font-size: 26px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="card">
+            <div class="header">
+                <div class="logo-area">
+                    <i class="fa-solid fa-shield-halved"></i> ALFA LICENSER
+                </div>
+                <div class="subtitle">Manual Offline Generator v1.0</div>
+            </div>
+
+            <!-- Secret Key Panel -->
+            <div class="form-group">
+                <label class="form-label" for="secret-key">
+                    Secret License Key
+                    <span>(Wajib sama dengan start.js)</span>
+                </label>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-key"></i>
+                    <input type="password" id="secret-key" class="form-control" value="ALFA-SECURE-KEY-2026">
+                    <i class="fa-solid fa-eye toggle-password" id="toggle-key-visibility" onclick="toggleSecretVisibility()"></i>
+                </div>
+            </div>
+
+             <!-- WhatsApp Number Input -->
+            <div class="form-group">
+                <label class="form-label" for="phone-number">
+                    Nomor WhatsApp Bot
+                    <span>(Angka bersih, diawali kode negara)</span>
+                </label>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-phone"></i>
+                    <input type="text" id="phone-number" class="form-control" placeholder="Contoh: 6282226769163" oninput="sanitizePhoneInput(this)">
+                </div>
+            </div>
+
+            <!-- Target Month Dropdown -->
+            <div class="form-group">
+                <label class="form-label" for="license-month">
+                    Periode Bulan Berlaku
+                    <span>(Lisensi aktif selama bulan ini)</span>
+                </label>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-calendar-days"></i>
+                    <select id="license-month" class="form-control">
+                        <!-- Options generated dynamically by script -->
+                    </select>
+                    <i class="fa-solid fa-chevron-down select-arrow"></i>
+                </div>
+            </div>
+
+            <!-- Generate Button -->
+            <button class="btn-submit" onclick="generateLicenseKey()">
+                <i class="fa-solid fa-circle-check"></i> Buat Kode Lisensi
+            </button>
+
+            <!-- Result Box -->
+            <div class="result-container" id="result-box">
+                <div class="result-title">
+                    <i class="fa-solid fa-circle-check"></i> Lisensi Berhasil Dibuat
+                </div>
+                <div class="license-box" id="license-key-display">
+                    --------
+                </div>
+                <button class="btn-copy" id="copy-btn" onclick="copyToClipboard()">
+                    <i class="fa-regular fa-copy"></i> Salin Kode
+                </button>
+            </div>
+        </div>
+
+        <div class="app-footer">
+            Sistem Keamanan Alfa Bot &copy; 2026<br>
+            Dikembangkan oleh <a href="https://wa.me/6282226769163" target="_blank">Alfa Official</a> | <a href="https://www.alfaofficial.my.id" target="_blank">Website Kami</a>
+        </div>
+    </div>
+
+    <script>
+        // Load on startup
+        window.addEventListener('DOMContentLoaded', () => {
+            populateMonthDropdown();
+        });
+
+        // Clean phone input to only numbers
+        function sanitizePhoneInput(input) {
+            input.value = input.value.replace(/[^0-9]/g, '');
+        }
+
+        // Populate dropdown with current, previous, and next 5 months dynamically
+        function populateMonthDropdown() {
+            const selectEl = document.getElementById('license-month');
+            selectEl.innerHTML = '';
+            
+            const monthNames = [
+                "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+                "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+            ];
+            
+            const now = new Date();
+            const startOffset = -1; // Include 1 month before current month
+            
+            for (let i = startOffset; i <= 6; i++) {
+                const tempDate = new Date(now.getFullYear(), now.getMonth() + i, 1);
+                const year = tempDate.getFullYear();
+                const monthVal = String(tempDate.getMonth() + 1).padStart(2, '0');
+                const valueStr = `${year}-${monthVal}`;
+                const labelStr = `${monthNames[tempDate.getMonth()]} ${year}`;
+                
+                const option = document.createElement('option');
+                option.value = valueStr;
+                option.textContent = labelStr;
+                
+                // Select current month by default
+                if (i === 0) {
+                    option.selected = true;
+                }
+                selectEl.appendChild(option);
+            }
+        }
+
+        // Core logic: Generate License Code using MD5 with Random Salt
+        function generateLicenseKey() {
+            const secretKey = "ALFA-SECURE-KEY-2026"; // Hardcoded Secret Key (Must match start.js)
+            const rawPhone = document.getElementById('phone-number').value.trim();
+            const targetMonth = document.getElementById('license-month').value;
+            const resultBox = document.getElementById('result-box');
+            const licenseDisplay = document.getElementById('license-key-display');
+            const copyBtn = document.getElementById('copy-btn');
+            
+            // Validation
+            if (!rawPhone || rawPhone.length < 9) {
+                alert('⚠️ Harap masukkan nomor WhatsApp yang valid (minimal 9 digit)!');
+                return;
+            }
+
+            // Sanitize phone number again
+            const phoneNumber = rawPhone.replace(/[^0-9]/g, '');
+
+            // Generate a random 4-digit salt (1000 - 9999)
+            const salt = Math.floor(1000 + Math.random() * 9000);
+
+            // Calculate Hash MD5 including salt
+            const inputString = secretKey + phoneNumber + salt + targetMonth;
+            const calculatedHash = md5(inputString);
+            
+            // Slice first 8 characters and make uppercase
+            const signature = calculatedHash.slice(0, 8).toUpperCase();
+            
+            // Combined license format: salt-signature (e.g. 5819-B3F9C2D1)
+            const finalLicenseCode = `${salt}-${signature}`;
+
+            // Display result
+            licenseDisplay.innerText = finalLicenseCode;
+            resultBox.style.display = 'block';
+            
+            // Reset copy button status
+            copyBtn.className = 'btn-copy';
+            copyBtn.innerHTML = '<i class="fa-regular fa-copy"></i> Salin Kode';
+        }
+
+        // Copy generated license to clipboard
+        function copyToClipboard() {
+            const licenseText = document.getElementById('license-key-display').innerText;
+            const copyBtn = document.getElementById('copy-btn');
+            
+            if (licenseText === '--------') return;
+
+            navigator.clipboard.writeText(licenseText).then(() => {
+                copyBtn.className = 'btn-copy copied';
+                copyBtn.innerHTML = '<i class="fa-solid fa-check"></i> Berhasil Disalin';
+            }).catch(err => {
+                alert('Gagal menyalin kode secara otomatis. Silakan salin secara manual.');
+            });
+        }
+    </script>
+</body>
+</html>
+
