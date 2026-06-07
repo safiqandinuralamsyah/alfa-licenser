@@ -5,38 +5,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Alfa Bot - License Generator Panel</title>
     
-    <!-- Google Fonts: Outfit -->
+    <!-- Google Fonts: Outfit (Asynchronous loading for performance) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
     
-    <!-- Font Awesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Blueimp MD5 CDN -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/blueimp-md5/2.19.0/js/md5.min.js"></script>
-
     <style>
         :root {
-            --bg-primary: #0a0f1d;
-            --bg-secondary: #131c31;
+            --bg-primary: #070b16;
+            --bg-secondary: #0f1626;
             --accent-color: #3b82f6;
             --accent-hover: #2563eb;
             --accent-success: #10b981;
             --accent-success-hover: #059669;
             --text-main: #f3f4f6;
-            --text-muted: #9ca3af;
-            --border-glass: rgba(255, 255, 255, 0.08);
-            --bg-glass: rgba(19, 28, 49, 0.7);
-            --glow-color: rgba(59, 130, 246, 0.4);
+            --text-muted: #8e9bb0;
+            --border-glass: rgba(255, 255, 255, 0.06);
+            --bg-glass: rgba(15, 22, 38, 0.7);
+            --glow-color: rgba(59, 130, 246, 0.35);
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Outfit', sans-serif;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         body {
@@ -52,48 +46,48 @@
             position: relative;
         }
 
-        /* Background Glow effects */
-        body::before {
-            content: '';
+        /* Ambient Glow backgrounds */
+        .glow-overlay-1 {
             position: absolute;
-            width: 400px;
-            height: 400px;
+            width: 350px;
+            height: 350px;
             background: radial-gradient(circle, var(--glow-color) 0%, rgba(0,0,0,0) 70%);
-            top: -100px;
-            left: -100px;
-            z-index: -1;
-            filter: blur(50px);
-            opacity: 0.5;
+            top: -50px;
+            left: -50px;
+            z-index: 1;
+            filter: blur(60px);
+            opacity: 0.6;
+            pointer-events: none;
         }
 
-        body::after {
-            content: '';
+        .glow-overlay-2 {
             position: absolute;
-            width: 450px;
-            height: 450px;
-            background: radial-gradient(circle, rgba(16, 185, 129, 0.2) 0%, rgba(0,0,0,0) 70%);
-            bottom: -100px;
-            right: -100px;
-            z-index: -1;
-            filter: blur(50px);
-            opacity: 0.5;
+            width: 380px;
+            height: 380px;
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.18) 0%, rgba(0,0,0,0) 70%);
+            bottom: -50px;
+            right: -50px;
+            z-index: 1;
+            filter: blur(60px);
+            opacity: 0.6;
+            pointer-events: none;
         }
 
         .container {
             width: 100%;
-            max-width: 550px;
+            max-width: 520px;
             z-index: 10;
         }
 
-        /* Glassmorphism Card */
+        /* Premium Glassmorphic Card */
         .card {
             background: var(--bg-glass);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border: 1px solid var(--border-glass);
             border-radius: 24px;
-            padding: 40px;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            padding: 35px;
+            box-shadow: 0 20px 45px rgba(0, 0, 0, 0.4);
             position: relative;
             overflow: hidden;
         }
@@ -108,19 +102,19 @@
             background: linear-gradient(90deg, var(--accent-color), var(--accent-success));
         }
 
-        /* Header Styles */
+        /* Header UI */
         .header {
             text-align: center;
-            margin-bottom: 35px;
+            margin-bottom: 30px;
         }
 
         .logo-area {
-            font-size: 45px;
+            font-size: 38px;
             background: linear-gradient(135deg, #3b82f6, #10b981);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             font-weight: 800;
-            letter-spacing: -1px;
+            letter-spacing: -0.5px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -128,30 +122,30 @@
             margin-bottom: 8px;
         }
 
-        .logo-area i {
-            background: linear-gradient(135deg, #3b82f6, #10b981);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+        .logo-area svg {
+            width: 38px;
+            height: 38px;
+            fill: url(#logo-grad);
         }
 
         .subtitle {
             color: var(--text-muted);
-            font-size: 14px;
-            font-weight: 400;
-            letter-spacing: 0.5px;
+            font-size: 13px;
+            font-weight: 500;
+            letter-spacing: 1px;
             text-transform: uppercase;
         }
 
-        /* Input Form Styles */
+        /* Form Controls */
         .form-group {
-            margin-bottom: 24px;
+            margin-bottom: 20px;
             position: relative;
         }
 
         .form-label {
             display: block;
-            font-size: 14px;
-            font-weight: 500;
+            font-size: 13px;
+            font-weight: 600;
             color: var(--text-main);
             margin-bottom: 8px;
             display: flex;
@@ -162,58 +156,72 @@
         .form-label span {
             font-size: 11px;
             color: var(--text-muted);
+            font-weight: 400;
         }
 
         .input-wrapper {
             position: relative;
         }
 
-        .input-wrapper i {
+        .input-icon {
             position: absolute;
             left: 16px;
             top: 50%;
             transform: translateY(-50%);
-            color: var(--text-muted);
-            font-size: 18px;
+            width: 18px;
+            height: 18px;
+            fill: var(--text-muted);
+            pointer-events: none;
         }
 
         .form-control {
             width: 100%;
-            background-color: rgba(10, 15, 29, 0.6);
+            background-color: rgba(5, 8, 16, 0.7);
             border: 1.5px solid var(--border-glass);
-            border-radius: 14px;
-            padding: 16px 16px 16px 48px;
+            border-radius: 12px;
+            padding: 14px 16px 14px 46px;
             color: var(--text-main);
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 500;
             outline: none;
         }
 
         .form-control:focus {
             border-color: var(--accent-color);
-            box-shadow: 0 0 15px rgba(59, 130, 246, 0.25);
-            background-color: rgba(10, 15, 29, 0.9);
+            box-shadow: 0 0 12px rgba(59, 130, 246, 0.2);
+            background-color: rgba(5, 8, 16, 0.95);
         }
 
-        /* Toggle Secret Key Visibility */
-        .toggle-password {
+        /* Toggle eye icon */
+        .eye-toggle-btn {
             position: absolute;
             right: 16px;
             top: 50%;
             transform: translateY(-50%);
+            background: none;
+            border: none;
             cursor: pointer;
-            color: var(--text-muted);
+            padding: 4px;
+            display: flex;
+            align-items: center;
         }
 
-        .toggle-password:hover {
-            color: var(--text-main);
+        .eye-toggle-btn svg {
+            width: 18px;
+            height: 18px;
+            fill: var(--text-muted);
         }
 
-        /* Month select design */
+        .eye-toggle-btn:hover svg {
+            fill: var(--text-main);
+        }
+
+        /* Target Select Dropdown */
         select.form-control {
             appearance: none;
             -webkit-appearance: none;
             cursor: pointer;
+            padding-right: 40px;
         }
 
         .select-arrow {
@@ -221,51 +229,77 @@
             right: 18px;
             top: 50%;
             transform: translateY(-50%);
-            color: var(--text-muted);
+            width: 14px;
+            height: 14px;
+            fill: var(--text-muted);
             pointer-events: none;
         }
 
-        /* Submit Button */
+        /* Action Buttons */
         .btn-submit {
             width: 100%;
             background: linear-gradient(135deg, var(--accent-color), var(--accent-hover));
             color: #ffffff;
             border: none;
-            border-radius: 14px;
-            padding: 18px;
-            font-size: 16px;
+            border-radius: 12px;
+            padding: 16px;
+            font-size: 15px;
             font-weight: 600;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 10px;
-            box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.25);
             margin-top: 10px;
         }
 
         .btn-submit:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 15px 25px rgba(59, 130, 246, 0.4);
-            filter: brightness(1.1);
+            transform: translateY(-1.5px);
+            box-shadow: 0 12px 25px rgba(59, 130, 246, 0.35);
+            filter: brightness(1.08);
         }
 
-        .btn-submit:active {
-            transform: translateY(1px);
+        .btn-submit svg {
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
         }
 
-        /* Result Area */
+        /* Validation indicator badge */
+        .validation-badge {
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-weight: 600;
+            margin-left: 8px;
+            display: none;
+        }
+
+        .validation-badge.valid {
+            background-color: rgba(16, 185, 129, 0.15);
+            color: var(--accent-success);
+            display: inline-block;
+        }
+
+        .validation-badge.invalid {
+            background-color: rgba(239, 68, 68, 0.15);
+            color: #ef4444;
+            display: inline-block;
+        }
+
+        /* Result Panel */
         .result-container {
-            margin-top: 35px;
-            background: rgba(16, 185, 129, 0.06);
-            border: 1.5px dashed rgba(16, 185, 129, 0.3);
-            border-radius: 18px;
-            padding: 24px;
+            margin-top: 25px;
+            background: rgba(16, 185, 129, 0.04);
+            border: 1.5px dashed rgba(16, 185, 129, 0.25);
+            border-radius: 16px;
+            padding: 20px;
             text-align: center;
             display: none;
-            transform: scale(0.95);
+            transform: scale(0.97);
             opacity: 0;
-            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.1) forwards;
         }
 
         @keyframes popIn {
@@ -277,54 +311,62 @@
 
         .result-title {
             color: var(--accent-success);
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 0.8px;
             margin-bottom: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 6px;
+        }
+
+        .result-title svg {
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
         }
 
         .license-box {
-            background-color: rgba(10, 15, 29, 0.8);
+            background-color: rgba(5, 8, 16, 0.9);
             border: 1px solid var(--border-glass);
-            border-radius: 12px;
-            padding: 18px;
-            font-size: 32px;
+            border-radius: 10px;
+            padding: 14px;
+            font-size: 26px;
             font-weight: 800;
             letter-spacing: 2px;
             color: #ffffff;
-            margin-bottom: 16px;
-            position: relative;
-            font-family: monospace;
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            margin-bottom: 14px;
+            font-family: 'Courier New', Courier, monospace;
+            text-shadow: 0 0 8px rgba(255, 255, 255, 0.15);
         }
 
         .btn-copy {
-            background: rgba(255, 255, 255, 0.06);
+            background: rgba(255, 255, 255, 0.05);
             color: var(--text-main);
             border: 1px solid var(--border-glass);
-            border-radius: 10px;
-            padding: 10px 20px;
-            font-size: 14px;
+            border-radius: 8px;
+            padding: 8px 16px;
+            font-size: 13px;
             font-weight: 600;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
         }
 
         .btn-copy:hover {
             background-color: var(--accent-success);
             border-color: var(--accent-success);
             color: #ffffff;
-            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+        }
+
+        .btn-copy svg {
+            width: 14px;
+            height: 14px;
+            fill: currentColor;
         }
 
         .btn-copy.copied {
@@ -333,11 +375,77 @@
             color: #ffffff;
         }
 
-        /* Footer info */
-        .app-footer {
-            margin-top: 30px;
-            text-align: center;
+        /* Help Accordion section */
+        .accordion-section {
+            margin-top: 20px;
+            border-top: 1px solid var(--border-glass);
+            padding-top: 15px;
+        }
+
+        .accordion-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+            padding: 5px 0;
+        }
+
+        .accordion-header:hover {
+            color: var(--text-main);
+        }
+
+        .accordion-header svg {
+            width: 12px;
+            height: 12px;
+            fill: currentColor;
+            transform: rotate(0deg);
+        }
+
+        .accordion-header.active svg {
+            transform: rotate(180deg);
+        }
+
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
             font-size: 12px;
+            line-height: 1.6;
+            color: var(--text-muted);
+            margin-top: 5px;
+        }
+
+        .accordion-content.active {
+            max-height: 200px;
+            margin-top: 10px;
+            padding-bottom: 5px;
+        }
+
+        .step-list {
+            list-style-type: none;
+        }
+
+        .step-list li {
+            position: relative;
+            padding-left: 20px;
+            margin-bottom: 8px;
+        }
+
+        .step-list li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--accent-success);
+            font-weight: bold;
+        }
+
+        /* Footer styling */
+        .app-footer {
+            margin-top: 25px;
+            text-align: center;
+            font-size: 11px;
             color: var(--text-muted);
             line-height: 1.6;
         }
@@ -345,115 +453,249 @@
         .app-footer a {
             color: var(--accent-color);
             text-decoration: none;
-            font-weight: 500;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
         }
 
         .app-footer a:hover {
             text-decoration: underline;
         }
 
-        /* Responsive Settings */
+        .app-footer svg {
+            width: 10px;
+            height: 10px;
+            fill: currentColor;
+        }
+
+        /* Responsive UI */
         @media (max-width: 480px) {
             .card {
-                padding: 24px;
+                padding: 25px;
                 border-radius: 20px;
             }
 
             .logo-area {
-                font-size: 35px;
+                font-size: 32px;
             }
 
             .license-box {
-                font-size: 26px;
+                font-size: 22px;
             }
         }
     </style>
 </head>
 <body>
 
+    <!-- SVG Gradients Defs -->
+    <svg style="display: none;">
+        <defs>
+            <linearGradient id="logo-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#3b82f6" />
+                <stop offset="100%" stop-color="#10b981" />
+            </linearGradient>
+        </defs>
+    </svg>
+
+    <div class="glow-overlay-1"></div>
+    <div class="glow-overlay-2"></div>
+
     <div class="container">
         <div class="card">
             <div class="header">
                 <div class="logo-area">
-                    <i class="fa-solid fa-shield-halved"></i> ALFA LICENSER
+                    <!-- Inline SVG Shield Icon -->
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                    </svg>
+                    ALFA LICENSER
                 </div>
-                <div class="subtitle">Manual Offline Generator v1.0</div>
+                <div class="subtitle">Layanan Generator Mandiri</div>
             </div>
 
             <!-- Secret Key Panel -->
             <div class="form-group">
                 <label class="form-label" for="secret-key">
                     Secret License Key
-                    <span>(Wajib sama dengan start.js)</span>
+                    <span>(Kunci Keamanan)</span>
                 </label>
                 <div class="input-wrapper">
-                    <i class="fa-solid fa-key"></i>
+                    <!-- Inline SVG Key Icon -->
+                    <svg class="input-icon" viewBox="0 0 24 24">
+                        <path d="M12.65 10C11.83 7.67 9.61 6 7 6c-3.31 0-6 2.69-6 6s2.69 6 6 6c2.61 0 4.83-1.67 5.65-4H17v4h4v-4h2v-4H12.65zM7 14c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"/>
+                    </svg>
                     <input type="password" id="secret-key" class="form-control" value="ALFA-SECURE-KEY-2026">
-                    <i class="fa-solid fa-eye toggle-password" id="toggle-key-visibility" onclick="toggleSecretVisibility()"></i>
+                    <button class="eye-toggle-btn" id="eye-toggle" onclick="toggleSecretVisibility()" title="Lihat/Sembunyikan">
+                        <!-- Inline SVG Eye Icon -->
+                        <svg id="eye-icon" viewBox="0 0 24 24">
+                            <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+                        </svg>
+                    </button>
                 </div>
             </div>
 
-             <!-- WhatsApp Number Input -->
+            <!-- WhatsApp Number Input -->
             <div class="form-group">
                 <label class="form-label" for="phone-number">
-                    Nomor WhatsApp Bot
-                    <span>(Angka bersih, diawali kode negara)</span>
+                    <span>
+                        Nomor WhatsApp Bot 
+                        <span id="validation-label" class="validation-badge">Format Salah</span>
+                    </span>
                 </label>
                 <div class="input-wrapper">
-                    <i class="fa-solid fa-phone"></i>
-                    <input type="text" id="phone-number" class="form-control" placeholder="Contoh: 6282226769163" oninput="sanitizePhoneInput(this)">
+                    <!-- Inline SVG Phone Icon -->
+                    <svg class="input-icon" viewBox="0 0 24 24">
+                        <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
+                    </svg>
+                    <input type="text" id="phone-number" class="form-control" placeholder="Contoh: 082226769163 atau 62822..." oninput="handlePhoneInput(this)">
                 </div>
             </div>
 
             <!-- Target Month Dropdown -->
             <div class="form-group">
                 <label class="form-label" for="license-month">
-                    Periode Bulan Berlaku
-                    <span>(Lisensi aktif selama bulan ini)</span>
+                    Periode Aktif Lisensi
+                    <span>(Otomatis kadaluarsa di akhir bulan)</span>
                 </label>
                 <div class="input-wrapper">
-                    <i class="fa-solid fa-calendar-days"></i>
+                    <!-- Inline SVG Calendar Icon -->
+                    <svg class="input-icon" viewBox="0 0 24 24">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2" fill="none" stroke="currentColor" stroke-width="2"/>
+                        <line x1="16" y1="2" x2="16" y2="6" stroke="currentColor" stroke-width="2"/>
+                        <line x1="8" y1="2" x2="8" y2="6" stroke="currentColor" stroke-width="2"/>
+                        <line x1="3" y1="10" x2="21" y2="10" stroke="currentColor" stroke-width="2"/>
+                    </svg>
                     <select id="license-month" class="form-control">
-                        <!-- Options generated dynamically by script -->
+                        <!-- Options generated dynamically -->
                     </select>
-                    <i class="fa-solid fa-chevron-down select-arrow"></i>
+                    <!-- Inline SVG Chevron Down Arrow -->
+                    <svg class="select-arrow" viewBox="0 0 24 24">
+                        <path d="M7 10l5 5 5-5z"/>
+                    </svg>
                 </div>
             </div>
 
             <!-- Generate Button -->
             <button class="btn-submit" onclick="generateLicenseKey()">
-                <i class="fa-solid fa-circle-check"></i> Buat Kode Lisensi
+                <!-- Inline SVG Check Circle -->
+                <svg viewBox="0 0 24 24">
+                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                </svg>
+                Buat Kode Lisensi
             </button>
 
-            <!-- Result Box -->
+            <!-- Result Panel -->
             <div class="result-container" id="result-box">
                 <div class="result-title">
-                    <i class="fa-solid fa-circle-check"></i> Lisensi Berhasil Dibuat
+                    <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                    Lisensi Berhasil Dibuat
                 </div>
                 <div class="license-box" id="license-key-display">
                     --------
                 </div>
                 <button class="btn-copy" id="copy-btn" onclick="copyToClipboard()">
-                    <i class="fa-regular fa-copy"></i> Salin Kode
+                    <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+                    Salin Kode
                 </button>
+            </div>
+
+            <!-- Accordion Petunjuk Cara Penggunaan -->
+            <div class="accordion-section">
+                <div class="accordion-header" id="accordion-btn" onclick="toggleAccordion()">
+                    Cara Aktivasi Bot WhatsApp
+                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
+                </div>
+                <div class="accordion-content" id="accordion-body">
+                    <ul class="step-list">
+                        <li>Masukkan nomor WA bot dan klik **"Buat Kode Lisensi"**.</li>
+                        <li>Salin kode acak yang muncul di kotak hijau.</li>
+                        <li>Jalankan bot WhatsApp di terminal HP/Termux/PC Anda.</li>
+                        <li>Tempelkan (*paste*) kode tersebut saat bot meminta kunci aktivasi lisensi.</li>
+                    </ul>
+                </div>
             </div>
         </div>
 
         <div class="app-footer">
             Sistem Keamanan Alfa Bot &copy; 2026<br>
-            Dikembangkan oleh <a href="https://wa.me/6282226769163" target="_blank">Alfa Official</a> | <a href="https://www.alfaofficial.my.id" target="_blank">Website Kami</a>
+            Kontak Creator: <a href="https://wa.me/6282226769163" target="_blank">
+                <svg viewBox="0 0 24 24" style="width: 12px; height: 12px;"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z"/></svg> Hubungi Owner
+            </a>
         </div>
     </div>
 
     <script>
-        // Load on startup
+        // DOM Elements
+        const secretInput = document.getElementById('secret-key');
+        const phoneInput = document.getElementById('phone-number');
+        const validationLabel = document.getElementById('validation-label');
+        const eyeIcon = document.getElementById('eye-icon');
+
+        // Path SVG Mata Buka & Tutup
+        const eyeOpenPath = "M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z";
+        const eyeClosedPath = "M12 19c5 0 9.27-3.11 11-7.5-1.73-4.39-6-7.5-11-7.5S2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5zM2 2l20 20"; // Cross eye path visualizer
+
+        // Load & Check Query Param & Stored Settings
         window.addEventListener('DOMContentLoaded', () => {
+            const storedKey = localStorage.getItem('alfa_secret_key');
+            if (storedKey) {
+                secretInput.value = storedKey;
+            }
             populateMonthDropdown();
+            checkUrlQueryParams();
         });
 
-        // Clean phone input to only numbers
-        function sanitizePhoneInput(input) {
-            input.value = input.value.replace(/[^0-9]/g, '');
+        // Toggle Secret Key Input Visibility
+        function toggleSecretVisibility() {
+            if (secretInput.type === 'password') {
+                secretInput.type = 'text';
+                // Toggle to eye-slash icon path representation
+                eyeIcon.innerHTML = `<path d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.82l2.92 2.92c1.51-1.2 2.72-2.78 3.44-4.74-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z"/>`;
+            } else {
+                secretInput.type = 'password';
+                eyeIcon.innerHTML = `<path d="${eyeOpenPath}"/>`;
+            }
+        }
+
+        // Clean & Format Phone Number Input Realtime
+        function handlePhoneInput(input) {
+            let val = input.value;
+            // Hapus karakter non-angka
+            val = val.replace(/[^0-9]/g, '');
+
+            // Auto conversion dari local format 08xx ke internasional 628xx
+            if (val.startsWith('08')) {
+                val = '628' + val.substring(2);
+            }
+
+            input.value = val;
+
+            // Simple validation UI
+            if (val.length >= 9 && val.length <= 15) {
+                validationLabel.className = "validation-badge valid";
+                validationLabel.innerText = "Nomor Valid";
+            } else if (val.length > 0) {
+                validationLabel.className = "validation-badge invalid";
+                validationLabel.innerText = "Terlalu Pendek";
+            } else {
+                validationLabel.style.display = "none";
+            }
+        }
+
+        // Check if there is ?phone=xxxx or ?num=xxxx in the address URL to auto fill
+        function checkUrlQueryParams() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const queryPhone = urlParams.get('phone') || urlParams.get('num');
+            
+            if (queryPhone) {
+                phoneInput.value = queryPhone;
+                handlePhoneInput(phoneInput);
+                // Auto generate license directly for ease of use
+                setTimeout(() => {
+                    generateLicenseKey();
+                }, 500);
+            }
         }
 
         // Populate dropdown with current, previous, and next 5 months dynamically
@@ -467,9 +709,8 @@
             ];
             
             const now = new Date();
-            const startOffset = -1; // Include 1 month before current month
-            
-            for (let i = startOffset; i <= 6; i++) {
+            // Start from current month
+            for (let i = 0; i <= 5; i++) {
                 const tempDate = new Date(now.getFullYear(), now.getMonth() + i, 1);
                 const year = tempDate.getFullYear();
                 const monthVal = String(tempDate.getMonth() + 1).padStart(2, '0');
@@ -480,7 +721,6 @@
                 option.value = valueStr;
                 option.textContent = labelStr;
                 
-                // Select current month by default
                 if (i === 0) {
                     option.selected = true;
                 }
@@ -488,47 +728,234 @@
             }
         }
 
-        // Core logic: Generate License Code using MD5 with Random Salt
+        // Toggle Accordion
+        function toggleAccordion() {
+            const header = document.getElementById('accordion-btn');
+            const body = document.getElementById('accordion-body');
+            header.classList.toggle('active');
+            body.classList.toggle('active');
+        }
+
+        // --- PURE JAVASCRIPT MD5 IMPLEMENTATION (Self-Contained / Offline Safe) ---
+        function calculateMd5(string) {
+            function RotateLeft(lValue, iShiftBits) {
+                return (lValue<<iShiftBits) | (lValue>>>(32-iShiftBits));
+            }
+            function AddUnsigned(lX,lY) {
+                var lX4,lY4,lX8,lY8,lResult;
+                lX8 = (lX & 0x80000000);
+                lY8 = (lY & 0x80000000);
+                lX4 = (lX & 0x40000000);
+                lY4 = (lY & 0x40000000);
+                lResult = (lX & 0x3FFFFFFF)+(lY & 0x3FFFFFFF);
+                if (lX4 & lY4) {
+                    return (lResult ^ 0x80000000 ^ lX8 ^ lY8);
+                }
+                if (lX4 | lY4) {
+                    if (lResult & 0x40000000) {
+                        return (lResult ^ 0xC0000000 ^ lX8 ^ lY8);
+                    } else {
+                        return (lResult ^ 0x40000000 ^ lX8 ^ lY8);
+                    }
+                } else {
+                    return (lResult ^ lX8 ^ lY8);
+                }
+            }
+            function F(x,y,z) { return (x & y) | ((~x) & z); }
+            function G(x,y,z) { return (x & z) | (y & (~z)); }
+            function H(x,y,z) { return (x ^ y ^ z); }
+            function I(x,y,z) { return (y ^ (x | (~z))); }
+            function II(a,b,c,d,x,s,ac) {
+                a = AddUnsigned(a, AddUnsigned(AddUnsigned(I(b,c,d), x), ac));
+                return AddUnsigned(RotateLeft(a, s), b);
+            }
+            function HH(a,b,c,d,x,s,ac) {
+                a = AddUnsigned(a, AddUnsigned(AddUnsigned(H(b,c,d), x), ac));
+                return AddUnsigned(RotateLeft(a, s), b);
+            }
+            function GG(a,b,c,d,x,s,ac) {
+                a = AddUnsigned(a, AddUnsigned(AddUnsigned(G(b,c,d), x), ac));
+                return AddUnsigned(RotateLeft(a, s), b);
+            }
+            function FF(a,b,c,d,x,s,ac) {
+                a = AddUnsigned(a, AddUnsigned(AddUnsigned(F(b,c,d), x), ac));
+                return AddUnsigned(RotateLeft(a, s), b);
+            }
+            function ConvertToWordArray(string) {
+                var lWordCount;
+                var lMessageLength = string.length;
+                var lNumberOfWords_temp1=lMessageLength + 8;
+                var lNumberOfWords_temp2=(lNumberOfWords_temp1-(lNumberOfWords_temp1 % 64))/64;
+                var lNumberOfWords = (lNumberOfWords_temp2 + 1)*16;
+                var lWordArray=Array(lWordArray);
+                var lBytePosition = 0;
+                var lByteCount = 0;
+                while ( lByteCount < lMessageLength ) {
+                    lWordCount = (lByteCount-(lByteCount % 4))/4;
+                    lBytePosition = (lByteCount % 4)*8;
+                    lWordArray[lWordCount] = (lWordArray[lWordCount] | (string.charCodeAt(lByteCount)<<lBytePosition));
+                    lByteCount++;
+                }
+                lWordCount = (lByteCount-(lByteCount % 4))/4;
+                lBytePosition = (lByteCount % 4)*8;
+                lWordArray[lWordCount] = lWordArray[lWordCount] | (0x80<<lBytePosition);
+                lWordArray[lNumberOfWords-2] = lMessageLength<<3;
+                lWordArray[lNumberOfWords-1] = lMessageLength>>>29;
+                return lWordArray;
+            }
+            function WordToHex(lValue) {
+                var WordToHexValue="",WordToHexValue_temp="",lByte,lCount;
+                for (lCount = 0;lCount<=3;lCount++) {
+                    lByte = (lValue>>>(lCount*8)) & 255;
+                    WordToHexValue_temp = "0" + lByte.toString(16);
+                    WordToHexValue = WordToHexValue + WordToHexValue_temp.substr(WordToHexValue_temp.length-2,2);
+                }
+                return WordToHexValue;
+            }
+            function Utf8Encode(string) {
+                string = string.replace(/\r\n/g,"\n");
+                var utftext = "";
+                for (var n = 0; n < string.length; n++) {
+                    var c = string.charCodeAt(n);
+                    if (c < 128) {
+                        utftext += String.fromCharCode(c);
+                    }
+                    else if((c > 127) && (c < 2048)) {
+                        utftext += String.fromCharCode((c >> 6) | 192);
+                        utftext += String.fromCharCode((c & 63) | 128);
+                    }
+                    else {
+                        utftext += String.fromCharCode((c >> 12) | 224);
+                        utftext += String.fromCharCode(((c >> 6) & 63) | 128);
+                        utftext += String.fromCharCode((c & 63) | 128);
+                    }
+                }
+                return utftext;
+            }
+            var x=Array();
+            var k,AA,BB,CC,DD,a,b,c,d;
+            var S11=7, S12=12, S13=17, S14=22;
+            var S21=5, S22=9, S23=14, S24=20;
+            var S31=4, S32=11, S33=16, S34=23;
+            var S41=6, S42=10, S43=15, S44=21;
+            string = Utf8Encode(string);
+            x = ConvertToWordArray(string);
+            a = 0x67452301; b = 0xEFCDAB89; c = 0x98BADCFE; d = 0x10325476;
+            for (k=0;k<x.length;k+=16) {
+                AA=a; BB=b; CC=c; DD=d;
+                a=FF(a,b,c,d,x[k+0], S11,0xD76AA478);
+                d=FF(d,a,b,c,x[k+1], S12,0xE8C7B756);
+                c=FF(c,d,a,b,x[k+2], S13,0x242070DB);
+                b=FF(b,c,d,a,x[k+3], S14,0xC1BDCEEE);
+                a=FF(a,b,c,d,x[k+4], S11,0xF57C0FAF);
+                d=FF(d,a,b,c,x[k+5], S12,0x4787C62A);
+                c=FF(c,d,a,b,x[k+6], S13,0xA8304613);
+                b=FF(b,c,d,a,x[k+7], S14,0xFD469501);
+                a=FF(a,b,c,d,x[k+8], S11,0x698098D8);
+                d=FF(d,a,b,c,x[k+9], S12,0x8B44F7AF);
+                c=FF(c,d,a,b,x[k+10],S13,0xFFFF5BB1);
+                b=FF(b,c,d,a,x[k+11],S14,0x895CD7BE);
+                a=FF(a,b,c,d,x[k+12],S11,0x6B901122);
+                d=FF(d,a,b,c,x[k+13],S12,0xFD987193);
+                c=FF(c,d,a,b,x[k+14],S13,0xA679438E);
+                b=FF(b,c,d,a,x[k+15],S14,0x49B40821);
+                a=GG(a,b,c,d,x[k+1], S21,0xF61E2562);
+                d=GG(d,a,b,c,x[k+6], S22,0xC040B340);
+                c=GG(c,d,a,b,x[k+11],S23,0x265E5A51);
+                b=GG(b,c,d,a,x[k+0], S24,0xE9B6C7AA);
+                a=GG(a,b,c,d,x[k+5], S21,0xD62F105D);
+                d=GG(d,a,b,c,x[k+10],S22,0x2441453);
+                c=GG(c,d,a,b,x[k+15],S23,0xD8A1E681);
+                b=GG(b,c,d,a,x[k+4], S24,0xE7D3FBC8);
+                a=GG(a,b,c,d,x[k+9], S21,0x21E1CDE6);
+                d=GG(d,a,b,c,x[k+14],S22,0xC33707D6);
+                c=GG(c,d,a,b,x[k+3], S23,0xF4D50D87);
+                b=GG(b,c,d,a,x[k+8], S24,0x455A14ED);
+                a=GG(a,b,c,d,x[k+13],S21,0xA9E3E905);
+                d=GG(d,a,b,c,x[k+2], S22,0xFCEFA3F8);
+                c=GG(c,d,a,b,x[k+7], S23,0x676F02D9);
+                b=GG(b,c,d,a,x[k+12],S24,0x8D2A4C8A);
+                a=HH(a,b,c,d,x[k+5], S31,0xFFFA3942);
+                d=HH(d,a,b,c,x[k+8], S32,0x8771F681);
+                c=HH(c,d,a,b,x[k+11],S33,0x6D9D6122);
+                b=HH(b,c,d,a,x[k+14],S34,0xFDE5380C);
+                a=HH(a,b,c,d,x[k+1], S31,0xA4BEEA44);
+                d=HH(d,a,b,c,x[k+4], S32,0x4BDECFA9);
+                c=HH(c,d,a,b,x[k+7], S33,0xF6BB4B60);
+                b=HH(b,c,d,a,x[k+10],S34,0xBEBFBC70);
+                a=HH(a,b,c,d,x[k+13],S31,0x289B7EC6);
+                d=HH(d,a,b,c,x[k+0], S32,0xEAA127FA);
+                c=HH(c,d,a,b,x[k+3], S33,0xD4EF3085);
+                b=HH(b,c,d,a,x[k+6], S34,0x4881D05);
+                a=HH(a,b,c,d,x[k+9], S31,0xD9D4D039);
+                d=HH(d,a,b,c,x[k+12],S32,0xE6DB99E5);
+                c=HH(c,d,a,b,x[k+15],S33,0x1FA27CF8);
+                b=HH(b,c,d,a,x[k+2], S34,0xC4AC5665);
+                a=II(a,b,c,d,x[k+0], S41,0xF4292244);
+                d=II(d,a,b,c,x[k+7], S42,0x432AFF97);
+                c=II(c,d,a,b,x[k+14],S43,0xAB9423A7);
+                b=II(b,c,d,a,x[k+5], S44,0xFC93A039);
+                a=II(a,b,c,d,x[k+12],S41,0x655B59C3);
+                d=II(d,a,b,c,x[k+3], S42,0x8F0CCC92);
+                c=II(c,d,a,b,x[k+10],S43,0xFFEFF47D);
+                b=II(b,c,d,a,x[k+1], S44,0x85845DD1);
+                a=II(a,b,c,d,x[k+8], S41,0x6FA87E4F);
+                d=II(d,a,b,c,x[k+15],S42,0xFE2CE6E0);
+                c=II(c,d,a,b,x[k+6], S43,0xA3014314);
+                b=II(b,c,d,a,x[k+13],S44,0x4E0811A1);
+                a=II(a,b,c,d,x[k+4], S41,0xF7537E82);
+                d=II(d,a,b,c,x[k+11],S42,0xBD3AF235);
+                c=II(c,d,a,b,x[k+2], S43,0x2AD7D2BB);
+                b=II(b,c,d,a,x[k+9], S44,0xEB86D391);
+                a=AddUnsigned(a,AA);
+                b=AddUnsigned(b,BB);
+                c=AddUnsigned(c,CC);
+                d=AddUnsigned(d,DD);
+            }
+            var temp = WordToHex(a)+WordToHex(b)+WordToHex(c)+WordToHex(d);
+            return temp.toLowerCase();
+        }
+
+        // Generate and verify key
         function generateLicenseKey() {
-            const secretKey = "ALFA-SECURE-KEY-2026"; // Hardcoded Secret Key (Must match start.js)
-            const rawPhone = document.getElementById('phone-number').value.trim();
+            const secretKey = secretInput.value.trim() || "ALFA-SECURE-KEY-2026";
+            const rawPhone = phoneInput.value.trim();
             const targetMonth = document.getElementById('license-month').value;
             const resultBox = document.getElementById('result-box');
             const licenseDisplay = document.getElementById('license-key-display');
             const copyBtn = document.getElementById('copy-btn');
             
-            // Validation
+            // Check validation
             if (!rawPhone || rawPhone.length < 9) {
-                alert('⚠️ Harap masukkan nomor WhatsApp yang valid (minimal 9 digit)!');
+                alert('⚠️ Harap masukkan nomor WhatsApp bot yang valid!');
                 return;
             }
 
-            // Sanitize phone number again
+            // Save key settings
+            localStorage.setItem('alfa_secret_key', secretKey);
+
+            // Clean number
             const phoneNumber = rawPhone.replace(/[^0-9]/g, '');
 
-            // Generate a random 4-digit salt (1000 - 9999)
+            // Random 4 digit Salt (1000 - 9999)
             const salt = Math.floor(1000 + Math.random() * 9000);
 
-            // Calculate Hash MD5 including salt
+            // Compute MD5 signature
             const inputString = secretKey + phoneNumber + salt + targetMonth;
-            const calculatedHash = md5(inputString);
+            const signature = calculateMd5(inputString).slice(0, 8).toUpperCase();
             
-            // Slice first 8 characters and make uppercase
-            const signature = calculatedHash.slice(0, 8).toUpperCase();
-            
-            // Combined license format: salt-signature (e.g. 5819-B3F9C2D1)
-            const finalLicenseCode = `${salt}-${signature}`;
+            // Combined format
+            const finalCode = `${salt}-${signature}`;
 
-            // Display result
-            licenseDisplay.innerText = finalLicenseCode;
+            licenseDisplay.innerText = finalCode;
             resultBox.style.display = 'block';
             
             // Reset copy button status
             copyBtn.className = 'btn-copy';
-            copyBtn.innerHTML = '<i class="fa-regular fa-copy"></i> Salin Kode';
+            copyBtn.innerHTML = `<svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg> Salin Kode`;
         }
 
-        // Copy generated license to clipboard
+        // Copy generated license code to clipboard
         function copyToClipboard() {
             const licenseText = document.getElementById('license-key-display').innerText;
             const copyBtn = document.getElementById('copy-btn');
@@ -537,7 +964,7 @@
 
             navigator.clipboard.writeText(licenseText).then(() => {
                 copyBtn.className = 'btn-copy copied';
-                copyBtn.innerHTML = '<i class="fa-solid fa-check"></i> Berhasil Disalin';
+                copyBtn.innerHTML = `<svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Berhasil Disalin`;
             }).catch(err => {
                 alert('Gagal menyalin kode secara otomatis. Silakan salin secara manual.');
             });
@@ -545,4 +972,3 @@
     </script>
 </body>
 </html>
-
